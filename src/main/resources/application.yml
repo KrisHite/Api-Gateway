@@ -13,18 +13,28 @@ spring:
     gateway:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      discovery:
+        locator:
+          enabled: true
       routes:
-        - id: USER-SERVICE
-          uri: lb://user-service
+        - id: USER-SERVICE-ONE
+          uri: lb://user-service-one
           predicates:
-            - Path= /**
+            - Path=/one/{segment}
+          filters:
+            - SetPath=/{segment}
+        - id: USER-SERVICE-TWO
+          uri: lb://user-service-two
+          predicates:
+            - Path=/two/{segment}
+          filters:
+            - SetPath=/{segment}
       globalcors:
         cors-configurations:
           '[/**]':
             allowedOrigins: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
-
 
 eureka:
   client:
